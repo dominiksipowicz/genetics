@@ -10,7 +10,8 @@ def extract_passed_ids_and_filter_stats(vcf_file):
     for variant in vcf:
         if variant.ID:
             filter_stats[variant.FILTER] += 1
-            ids.add(variant.ID)
+            if variant.FILTER is None:
+                ids.add(variant.ID)
     
     return ids, filter_stats
 
@@ -33,15 +34,15 @@ total_anna_ids = len(anna_ids)
 shared_ids_percent = len(shared_ids) / total_anna_ids * 100
 
 # Save results to text files
-with open('shared_ids.txt', 'w') as f:
+with open('Dom/shared_ids.txt', 'w') as f:
     for id in shared_ids:
         f.write(id + '\n')
 
-with open('my_unique_ids.txt', 'w') as f:
+with open('Dom/my_unique_ids.txt', 'w') as f:
     for id in my_unique_ids:
         f.write(id + '\n')
 
-with open('anna_unique_ids.txt', 'w') as f:
+with open('Dom/anna_unique_ids.txt', 'w') as f:
     for id in anna_unique_ids:
         f.write(id + '\n')
 
