@@ -11,7 +11,8 @@ def extract_passed_ids_and_filter_stats(vcf_file):
         if variant.ID:
             filter_stats[variant.FILTER] += 1
             if variant.FILTER is None:
-                ids.add(variant.ID)
+                unique_id = f"{variant.CHROM}_{variant.POS}_{variant.ID}"
+                ids.add(unique_id)
     
     return ids, filter_stats
 
