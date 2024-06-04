@@ -2,10 +2,11 @@ import pandas as pd
 from cyvcf2 import VCF
 from collections import Counter
 
-def extract_passed_ids_and_filter_stats(vcf_file):
+def extract_variant_stats(vcf_file):
     vcf = VCF(vcf_file)
     ids = set()
     filter_stats = Counter()
+    variant_stats = Counter({'SNP': 0, 'Indel': 0, 'SV': 0})
 
     for variant in vcf:
         if variant.ID:
@@ -13,16 +14,25 @@ def extract_passed_ids_and_filter_stats(vcf_file):
             if variant.FILTER is None:
                 unique_id = f"{variant.CHROM}_{variant.POS}_{variant.ID}"
                 ids.add(unique_id)
+                ref_len = len(variant.REF)
+                alt_len = len(variant.ALT[0])
+
+                if 'SVTYPE' in variant.INFO:
+                    variant_stats['SV'] += 1
+                elif ref_len == 1 and alt_len == 1:
+                    variant_stats['SNP'] += 1
+                else:
+                    variant_stats['Indel'] += 1
     
-    return ids, filter_stats
+    return ids, filter_stats, variant_stats
 
 # Paths to your and Anna's VCF files
 my_vcf_file = 'Dom/NG173LPFBH.vcf'
 anna_vcf_file = 'Anna/NG1ABXTVKT.hard-filtered.vcf'
 
-# Extract variant IDs and filter statistics from the VCF files
-my_ids, my_filter_stats = extract_passed_ids_and_filter_stats(my_vcf_file)
-anna_ids, anna_filter_stats = extract_passed_ids_and_filter_stats(anna_vcf_file)
+# Extract variant IDs, filter statistics, and variant types from the VCF files
+my_ids, my_filter_stats, my_variant_stats = extract_variant_stats(my_vcf_file)
+anna_ids, anna_filter_stats, anna_variant_stats = extract_variant_stats(anna_vcf_file)
 
 # Find shared and unique IDs
 shared_ids = my_ids.intersection(anna_ids)
@@ -55,6 +65,15 @@ for filter_value, count in my_filter_stats.items():
 print("\nFILTER Statistics for Anna:")
 for filter_value, count in anna_filter_stats.items():
     print(f"{filter_value}: {count}")
+
+# Print variant statistics
+print("\nVariant Statistics for Myself:")
+for variant_type, count in my_variant_stats.items():
+    print(f"{variant_type}: {count}")
+
+print("\nVariant Statistics for Anna:")
+for variant_type, count in anna_variant_stats.items():
+    print(f"{variant_type}: {count}")
 
 # Print summary statistics
 print(f"\nMy total variants: {total_my_ids}")
