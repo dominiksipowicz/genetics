@@ -7,10 +7,12 @@ def extract_variant_stats(vcf_file):
     ids = set()
     filter_stats = Counter()
     variant_stats = Counter({'SNP': 0, 'Indel': 0, 'SV': 0})
+    qual_scores = []  # Store QUAL scores
 
     for variant in vcf:
         if variant.ID:
             filter_stats[variant.FILTER] += 1
+            qual_scores.append(variant.QUAL)  # Extract QUAL score
             if variant.FILTER is None:
                 unique_id = f"{variant.CHROM}_{variant.POS}_{variant.ID}"
                 ids.add(unique_id)
@@ -24,15 +26,16 @@ def extract_variant_stats(vcf_file):
                 else:
                     variant_stats['Indel'] += 1
     
-    return ids, filter_stats, variant_stats
+    average_qual_score = sum(qual_scores) / len(qual_scores) if qual_scores else 0  # Calculate average QUAL score
+    return ids, filter_stats, variant_stats, average_qual_score
 
 # Paths to your and Anna's VCF files
 my_vcf_file = 'Dom/NG173LPFBH.vcf'
 anna_vcf_file = 'Anna/NG1ABXTVKT.hard-filtered.vcf'
 
-# Extract variant IDs, filter statistics, and variant types from the VCF files
-my_ids, my_filter_stats, my_variant_stats = extract_variant_stats(my_vcf_file)
-anna_ids, anna_filter_stats, anna_variant_stats = extract_variant_stats(anna_vcf_file)
+# Extract variant IDs, filter statistics, variant types, and average QUAL scores from the VCF files
+my_ids, my_filter_stats, my_variant_stats, my_average_qual = extract_variant_stats(my_vcf_file)
+anna_ids, anna_filter_stats, anna_variant_stats, anna_average_qual = extract_variant_stats(anna_vcf_file)
 
 # Find shared and unique IDs
 shared_ids = my_ids.intersection(anna_ids)
@@ -80,3 +83,5 @@ print(f"\nMy total variants: {total_my_ids}")
 print(f"Anna's total variants: {total_anna_ids}")
 print(f"Shared IDs: {len(shared_ids)}")
 print(f"Percentage of shared IDs: {shared_ids_percent:.2f}%")
+print(f"My average QUAL score: {my_average_qual:.2f}")
+print(f"Anna's average QUAL score: {anna_average_qual:.2f}")
