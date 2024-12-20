@@ -2,6 +2,12 @@ import pandas as pd
 from cyvcf2 import VCF
 from collections import Counter
 
+# Paths to your and Anna's VCF files
+dom_vcf_file = 'Dom/NG173LPFBH.vcf'
+anna_vcf_file = 'Anna/NG1ABXTVKT.hard-filtered.vcf'
+babcia_vcf_file = 'Babcia/M6FQWVFCC.hard-filtered.vcf'
+
+
 def extract_variant_stats(vcf_file):
     vcf = VCF(vcf_file)
     ids = set()
@@ -26,57 +32,60 @@ def extract_variant_stats(vcf_file):
     
     return ids, filter_stats, variant_stats
 
-# Paths to your and Anna's VCF files
-my_vcf_file = 'Dom/NG173LPFBH.vcf'
-anna_vcf_file = 'Anna/NG1ABXTVKT.hard-filtered.vcf'
 
 # Extract variant IDs, filter statistics, and variant types from the VCF files
-my_ids, my_filter_stats, my_variant_stats = extract_variant_stats(my_vcf_file)
+dom_ids, dom_filter_stats, dom_variant_stats = extract_variant_stats(dom_vcf_file)
 anna_ids, anna_filter_stats, anna_variant_stats = extract_variant_stats(anna_vcf_file)
+babcia_ids, babcia_filter_stats, babcia_variant_stats = extract_variant_stats(babcia_vcf_file)
 
 # Find shared and unique IDs
-shared_ids = my_ids.intersection(anna_ids)
-my_unique_ids = my_ids.difference(anna_ids)
-anna_unique_ids = anna_ids.difference(my_ids)
+dom_anna_shared_ids = dom_ids.intersection(anna_ids)
+dom_babcia_shared_ids = dom_ids.intersection(babcia_ids)
+anna_babcia_shared_ids = anna_ids.intersection(babcia_ids)
+
+dom_anna_shared_ids_percent = len(dom_anna_shared_ids) / len(dom_ids) * 100
+dom_babcia_shared_ids_percent = len(dom_babcia_shared_ids) / len(dom_ids) * 100
+anna_babcia_shared_ids_percent = len(anna_babcia_shared_ids) / len(anna_ids) * 100
 
 # Calculate the percentage of shared IDs based on Anna's total IDs
-total_my_ids = len(my_ids)
+total_dom_ids = len(dom_ids)
 total_anna_ids = len(anna_ids)
-shared_ids_percent = len(shared_ids) / total_anna_ids * 100
+total_babcia_ids = len(babcia_ids)
 
 # Save results to text files
-with open('Dom/shared_ids.txt', 'w') as f:
-    for id in shared_ids:
+with open('Dom/anna_dom_shared_ids.txt', 'w') as f:
+    for id in dom_anna_shared_ids:
         f.write(id + '\n')
 
-with open('Dom/my_unique_ids.txt', 'w') as f:
-    for id in my_unique_ids:
+with open('Dom/babcia_dom_shared_ids.txt', 'w') as f:
+    for id in dom_babcia_shared_ids:
         f.write(id + '\n')
 
-with open('Dom/anna_unique_ids.txt', 'w') as f:
-    for id in anna_unique_ids:
+with open('Anna/babcia_anna_shared_ids.txt', 'w') as f:
+    for id in anna_babcia_shared_ids:
         f.write(id + '\n')
-
-# Print filter statistics
-print("FILTER Statistics for Myself:")
-for filter_value, count in my_filter_stats.items():
-    print(f"{filter_value}: {count}")
-
-print("\nFILTER Statistics for Anna:")
-for filter_value, count in anna_filter_stats.items():
-    print(f"{filter_value}: {count}")
 
 # Print variant statistics
-print("\nVariant Statistics for Myself:")
-for variant_type, count in my_variant_stats.items():
+print("\nVariant Statistics for Dom:")
+for variant_type, count in dom_variant_stats.items():
     print(f"{variant_type}: {count}")
 
 print("\nVariant Statistics for Anna:")
 for variant_type, count in anna_variant_stats.items():
     print(f"{variant_type}: {count}")
 
+print("\nVariant Statistics for Babcia:")
+for variant_type, count in babcia_variant_stats.items():
+    print(f"{variant_type}: {count}")
+
 # Print summary statistics
-print(f"\nMy total variants: {total_my_ids}")
+print(f"\n")
+print(f"Dom total variants: {total_dom_ids}")
 print(f"Anna's total variants: {total_anna_ids}")
-print(f"Shared IDs: {len(shared_ids)}")
-print(f"Percentage of shared IDs: {shared_ids_percent:.2f}%")
+print(f"Babcia's total variants: {total_babcia_ids}")
+print(f"Dom/Anna Shared IDs: {len(dom_anna_shared_ids)}")
+print(f"Dom/Anna Percentage of shared IDs: {dom_anna_shared_ids_percent:.2f}%")
+print(f"Dom/Babcia Shared IDs: {len(dom_babcia_shared_ids)}")
+print(f"Dom/Babcia Percentage of shared IDs: {dom_babcia_shared_ids_percent:.2f}%")
+print(f"Anna/Babcia Shared IDs: {len(anna_babcia_shared_ids)}")
+print(f"Anna/Babcia Percentage of shared IDs: {anna_babcia_shared_ids_percent:.2f}%")
