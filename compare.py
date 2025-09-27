@@ -6,6 +6,7 @@ from collections import Counter
 dom_vcf_file = 'Dom/NG173LPFBH.vcf'
 anna_vcf_file = 'Anna/NG1ABXTVKT.hard-filtered.vcf'
 babcia_vcf_file = 'Babcia/M6FQWVFCC.hard-filtered.vcf'
+jadwiga_vcf_file = 'Jadwiga/MG46K47NL.hard-filtered.vcf'
 
 
 def extract_variant_stats(vcf_file):
@@ -37,20 +38,27 @@ def extract_variant_stats(vcf_file):
 dom_ids, dom_filter_stats, dom_variant_stats = extract_variant_stats(dom_vcf_file)
 anna_ids, anna_filter_stats, anna_variant_stats = extract_variant_stats(anna_vcf_file)
 babcia_ids, babcia_filter_stats, babcia_variant_stats = extract_variant_stats(babcia_vcf_file)
+jadwiga_ids, jadwiga_filter_stats, jadwiga_variant_stats = extract_variant_stats(jadwiga_vcf_file)
 
 # Find shared and unique IDs
 dom_anna_shared_ids = dom_ids.intersection(anna_ids)
 dom_babcia_shared_ids = dom_ids.intersection(babcia_ids)
+dom_jadwiga_shared_ids = dom_ids.intersection(jadwiga_ids)
 anna_babcia_shared_ids = anna_ids.intersection(babcia_ids)
+anna_jadwiga_shared_ids = anna_ids.intersection(jadwiga_ids)
 
 dom_anna_shared_ids_percent = len(dom_anna_shared_ids) / len(dom_ids) * 100
 dom_babcia_shared_ids_percent = len(dom_babcia_shared_ids) / len(dom_ids) * 100
 anna_babcia_shared_ids_percent = len(anna_babcia_shared_ids) / len(anna_ids) * 100
+dom_jadwiga_shared_ids_percent = len(dom_jadwiga_shared_ids) / len(dom_ids) * 100
+anna_jadwiga_shared_ids_percent = len(anna_jadwiga_shared_ids) / len(anna_ids) * 100
+
 
 # Calculate the percentage of shared IDs based on Anna's total IDs
 total_dom_ids = len(dom_ids)
 total_anna_ids = len(anna_ids)
 total_babcia_ids = len(babcia_ids)
+total_jadwiga_ids = len(jadwiga_ids)
 
 # Save results to text files
 with open('Dom/anna_dom_shared_ids.txt', 'w') as f:
@@ -63,6 +71,14 @@ with open('Dom/babcia_dom_shared_ids.txt', 'w') as f:
 
 with open('Anna/babcia_anna_shared_ids.txt', 'w') as f:
     for id in anna_babcia_shared_ids:
+        f.write(id + '\n')
+
+with open('Dom/jadwiga_dom_shared_ids.txt', 'w') as f:
+    for id in dom_jadwiga_shared_ids:
+        f.write(id + '\n')
+
+with open('Anna/jadwiga_anna_shared_ids.txt', 'w') as f:
+    for id in anna_jadwiga_shared_ids:
         f.write(id + '\n')
 
 # Print variant statistics
@@ -78,14 +94,23 @@ print("\nVariant Statistics for Babcia:")
 for variant_type, count in babcia_variant_stats.items():
     print(f"{variant_type}: {count}")
 
+print("\nVariant Statistics for Jadwiga:")
+for variant_type, count in jadwiga_variant_stats.items():
+    print(f"{variant_type}: {count}")
+
 # Print summary statistics
 print(f"\n")
 print(f"Dom total variants: {total_dom_ids}")
 print(f"Anna's total variants: {total_anna_ids}")
 print(f"Babcia's total variants: {total_babcia_ids}")
+print(f"Jadwiga's total variants: {total_jadwiga_ids}")
 print(f"Dom/Anna Shared IDs: {len(dom_anna_shared_ids)}")
 print(f"Dom/Anna Percentage of shared IDs: {dom_anna_shared_ids_percent:.2f}%")
 print(f"Dom/Babcia Shared IDs: {len(dom_babcia_shared_ids)}")
 print(f"Dom/Babcia Percentage of shared IDs: {dom_babcia_shared_ids_percent:.2f}%")
 print(f"Anna/Babcia Shared IDs: {len(anna_babcia_shared_ids)}")
 print(f"Anna/Babcia Percentage of shared IDs: {anna_babcia_shared_ids_percent:.2f}%")
+print(f"Dom/Jadwiga Shared IDs: {len(dom_jadwiga_shared_ids)}")
+print(f"Dom/Jadwiga Percentage of shared IDs: {dom_jadwiga_shared_ids_percent:.2f}%")
+print(f"Anna/Jadwiga Shared IDs: {len(anna_jadwiga_shared_ids)}")
+print(f"Anna/Jadwiga Percentage of shared IDs: {anna_jadwiga_shared_ids_percent:.2f}%")

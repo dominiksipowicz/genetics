@@ -7,8 +7,8 @@ from collections import Counter
 # vcf_file = 'Dom/NG173LPFBH.vcf'
 # output_file = 'Dom/parsed_vcf_data.csv'
 # Anna
-vcf_file = 'Anna/NG1ABXTVKT.hard-filtered.vcf'
-output_file = 'Anna/parsed_vcf_data.csv'
+vcf_file = 'Jadwiga/MG46K47NL.hard-filtered.vcf'
+output_file = 'Jadwiga/parsed_vcf_data.csv'
 # Babcia
 # vcf_file = 'Babcia/M6FQWVFCC.hard-filtered.vcf'
 # output_file = 'Babcia/parsed_vcf_data.csv'
